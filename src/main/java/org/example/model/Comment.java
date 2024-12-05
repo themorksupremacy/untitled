@@ -16,6 +16,7 @@ public class Comment {
     @ManyToOne // Many posts can belong to one user
     @JoinColumn(name = "postid", referencedColumnName = "id")
     private Post post;
+    @ManyToOne
     @JoinColumn(name = "userid", referencedColumnName = "id")
     private EndUser endUser;
 
