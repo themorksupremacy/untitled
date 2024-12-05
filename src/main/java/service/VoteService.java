@@ -11,27 +11,22 @@ public class VoteService {
     private final VoteRepository voteRepository;
 
     public VoteService(VoteRepository voteRepository) {
-
         this.voteRepository = voteRepository;
     }
 
     public List<Vote> getAllVotes() {
-
         return voteRepository.findAll();
     }
 
-    public Vote getVoteById(long id) {
-
+    public Vote getVoteid(long id) {
         return voteRepository.findVoteById(id);
     }
 
     public Vote saveVote(Vote vote) {
-
         return voteRepository.save(vote);
     }
 
     public void deleteVote(Long id) {
-
         voteRepository.deleteById(id);
     }
 }
