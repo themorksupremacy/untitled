@@ -4,6 +4,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import jakarta.persistence.GeneratedValue;
+
 import java.sql.Timestamp;
 
 public class Comment {
@@ -20,6 +22,7 @@ public class Comment {
     }
 
     public Comment(long commentId, String content, Timestamp timestamp, long postId, long userId) {
+
         this.commentId = commentId;
         this.content = content;
         this.timestamp = timestamp;

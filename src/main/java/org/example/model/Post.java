@@ -1,38 +1,40 @@
 package org.example.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.sql.Timestamp;
 
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId;
+    private long id;
     private String content;
     private Timestamp timestamp;
     private String location;
-    private long userId;
 
-    public Post(){}
+    @ManyToOne // Many posts can belong to one user
+    @JoinColumn(name = "userid", referencedColumnName = "id")
+    private EndUser endUser;
 
-    public Post(long postId, String content, Timestamp timestamp, String location, long userId) {
-        this.postId = postId;
+    public Post() {
+    }
+
+    public Post(long id, String content, Timestamp timestamp, String location, EndUser endUser) {
+        this.id = id;
         this.content = content;
         this.timestamp = timestamp;
         this.location = location;
-        this.userId = userId;
+        this.endUser = endUser;
     }
 
     //Getters & Setters
 
-    public long getPostId() {
-        return postId;
+    public long getId() {
+        return id;
     }
 
-    public void setPostId(long postId) {
-        this.postId = postId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getContent() {
@@ -59,11 +61,12 @@ public class Post {
         this.location = location;
     }
 
-    public long getUserId() {
-        return userId;
+    public EndUser getEndUser() {
+        return endUser;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUserId(EndUser endUser) {
+        this.endUser = endUser;
     }
+
 }
