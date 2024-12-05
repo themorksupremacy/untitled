@@ -6,10 +6,13 @@ import jakarta.persistence.GeneratedValue;
 
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long commentId;
+    @Column(name = "id")
+    private long id;
     private String content;
     private Timestamp timestamp;
 
@@ -26,7 +29,7 @@ public class Comment {
 
     public Comment(long commentId, String content, Timestamp timestamp, Post post, EndUser EndUser) {
 
-        this.commentId = commentId;
+        this.id = commentId;
         this.content = content;
         this.timestamp = timestamp;
         this.post = post;
@@ -36,11 +39,11 @@ public class Comment {
     //Getters & Setters
 
     public long getCommentId() {
-        return commentId;
+        return id;
     }
 
     public void setCommentId(long commentId) {
-        this.commentId = commentId;
+        this.id = commentId;
     }
 
     public String getContent() {
