@@ -1,8 +1,6 @@
 package org.example.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import jakarta.persistence.GeneratedValue;
 
@@ -14,7 +12,11 @@ public class Comment {
     private long commentId;
     private String content;
     private Timestamp timestamp;
+
+    @ManyToOne // Many posts can belong to one user
+    @JoinColumn(name = "postid", referencedColumnName = "id")
     private long postId;
+    @JoinColumn(name = "userid", referencedColumnName = "id")
     private long userId;
 
     public Comment(){

@@ -1,16 +1,22 @@
 package org.example.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean type;
+
+    @ManyToOne // Many posts can belong to one user
+    @JoinColumn(name = "userid", referencedColumnName = "id")
     private EndUser user;
+    @JoinColumn(name = "commentid", referencedColumnName = "id")
     private Comment comment;
+
+    public Vote() {
+
+    }
 
     public Vote(Long id, Boolean type, EndUser user, Comment comment) {
         super();
