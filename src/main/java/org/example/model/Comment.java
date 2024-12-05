@@ -15,21 +15,21 @@ public class Comment {
 
     @ManyToOne // Many posts can belong to one user
     @JoinColumn(name = "postid", referencedColumnName = "id")
-    private long postId;
+    private Post post;
     @JoinColumn(name = "userid", referencedColumnName = "id")
-    private long userId;
+    private EndUser endUser;
 
     public Comment(){
 
     }
 
-    public Comment(long commentId, String content, Timestamp timestamp, long postId, long userId) {
+    public Comment(long commentId, String content, Timestamp timestamp, Post post, EndUser EndUser) {
 
         this.commentId = commentId;
         this.content = content;
         this.timestamp = timestamp;
-        this.postId = postId;
-        this.userId = userId;
+        this.post = post;
+        this.endUser = endUser;
     }
 
     //Getters & Setters
@@ -58,20 +58,20 @@ public class Comment {
         this.timestamp = timestamp;
     }
 
-    public long getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(long postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public long getUserId() {
-        return userId;
+    public EndUser getEndUser() {
+        return endUser;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setEndUser(EndUser endUser) {
+        this.endUser = endUser;
     }
 
 
