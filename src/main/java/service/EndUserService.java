@@ -11,22 +11,27 @@ public class EndUserService {
     private final EndUserRepository endUserRepository;
 
     public EndUserService(EndUserRepository endUserRepository) {
+
         this.endUserRepository = endUserRepository;
     }
 
     public List<EndUser> getAllUsers() {
+
         return endUserRepository.findAll();
     }
 
     public EndUser getUserByUsername(String username) {
+
         return endUserRepository.findByUsername(username);
     }
 
     public EndUser saveUser(EndUser endUser) {
+
         return endUserRepository.save(endUser);
     }
 
     public void deleteUser(Long id) {
+
         endUserRepository.deleteById(id);
     }
 }
