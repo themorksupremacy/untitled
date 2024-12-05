@@ -14,7 +14,7 @@ public class EndUserService {
 
         this.endUserRepository = endUserRepository;
     }
-
+/*
     public List<EndUser> getAllUsers() {
 
         return endUserRepository.findAll();
@@ -24,7 +24,7 @@ public class EndUserService {
 
         return endUserRepository.findByUsername(username);
     }
-
+*/
     public EndUser saveUser(EndUser endUser) {
 
         return endUserRepository.save(endUser);
