@@ -11,6 +11,7 @@ public class Vote {
     @ManyToOne // Many posts can belong to one user
     @JoinColumn(name = "userid", referencedColumnName = "id")
     private EndUser user;
+    @ManyToOne
     @JoinColumn(name = "commentid", referencedColumnName = "id")
     private Comment comment;
 
