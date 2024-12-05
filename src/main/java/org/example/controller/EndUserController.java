@@ -19,15 +19,17 @@ public class EndUserController {
     @GetMapping("/test-enduser")
     public String testEndUserRepository() {
         try {
-            // Fetch all users to test the repository connection
             List<EndUser> users = endUserRepository.findAll();
             if (users.isEmpty()) {
                 return "EndUser repository is connected, but no users found!";
             } else {
+                // Log or print the users to check their details
+                users.forEach(user -> System.out.println(user.getUsername()));
                 return "EndUser repository is connected! Found " + users.size() + " users.";
             }
         } catch (Exception e) {
-            return "EndUser repository connection failed: " + e.getMessage();
+            return "Error fetching users: " + e.getMessage();
         }
     }
 }
+
