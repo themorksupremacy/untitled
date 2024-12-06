@@ -1,32 +1,73 @@
 package org.example.service;
 
+import org.example.dto.CommentDTO;
 import org.example.model.Comment;
+import org.example.model.EndUser;
+import org.example.model.Post;
 import org.example.repository.CommentRepository;
+import org.example.repository.EndUserRepository;
+import org.example.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final EndUserRepository endUserRepository;
 
-    public CommentService(CommentRepository commentRepository) {
-
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, EndUserRepository endUserRepository) {
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.endUserRepository = endUserRepository;
     }
 
-    public List<Comment> getAllComments() {
-
-        return commentRepository.findAll();
+    // Get all comments as DTOs
+    public List<CommentDTO> getAllComments() {
+        return commentRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Comment saveComment(Comment comment) {
+    // Save a new comment from a DTO
+    public CommentDTO saveComment(CommentDTO commentDTO) {
+        Post post = postRepository.findById(commentDTO.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + commentDTO.getPostId()));
+        EndUser user = endUserRepository.findById(commentDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User ID: " + commentDTO.getUserId()));
 
-        return commentRepository.save(comment);
+        Comment comment = mapToEntity(commentDTO, post, user);
+        Comment savedComment = commentRepository.save(comment);
+        return mapToDTO(savedComment);
     }
 
+    // Delete a comment by its ID
     public void deleteComment(Long id) {
-
         commentRepository.deleteById(id);
+    }
+
+    // Map Comment entity to DTO
+    private CommentDTO mapToDTO(Comment comment) {
+        return new CommentDTO(
+                comment.getCommentId(),
+                comment.getContent(),
+                comment.getTimestamp(),
+                comment.getPost() != null ? comment.getPost().getId() : null,
+                comment.getEndUser() != null ? comment.getEndUser().getId() : null
+        );
+    }
+
+    // Map DTO to Comment entity
+    private Comment mapToEntity(CommentDTO commentDTO, Post post, EndUser user) {
+        Comment comment = new Comment();
+        comment.setCommentId(commentDTO.getId());
+        comment.setContent(commentDTO.getContent());
+        comment.setTimestamp(commentDTO.getTimestamp());
+        comment.setPost(post);
+        comment.setEndUser(user);
+        return comment;
     }
 }
