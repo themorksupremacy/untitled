@@ -38,4 +38,43 @@ public class EndUserService {
     public void deleteUser(Long id) {
         endUserRepository.deleteById(id);
     }
+
+    /**
+     * Authenticates a user by validating the username and password.
+     *
+     * @param username the username of the user
+     * @param password the password of the user
+     * @return an EndUserDTO if authentication is successful
+     * @throws Exception if the username or password is invalid
+     */
+    public String authenticate(String username, String password) throws Exception {
+        // Fetch user by username
+        EndUser endUser = endUserRepository.findByUsername(username);
+
+        // Check if the user exists and if the password matches
+        if (endUser == null || !endUser.getPasswordHash().equals(password)) {
+
+            throw new Exception("Passwordhash: " + endUser.getPasswordHash() + " entered password: " + password);
+        }
+
+        // Generate a token (for simplicity, returning a placeholder string)
+        String token = generateToken(endUser);
+
+        // Return the token if authentication is successful
+        return token;
+    }
+
+    /**
+     * Generates a token for the authenticated user (placeholder for actual JWT implementation).
+     *
+     * @param endUser the authenticated user
+     * @return a generated token as a String
+     */
+    private String generateToken(EndUser endUser) {
+        // Placeholder token generation logic (use JWT library in production)
+        return "token_" + endUser.getId() + "_" + System.currentTimeMillis();
+    }
 }
+
+
+
