@@ -1,4 +1,4 @@
-package service;
+package org.example.service;
 
 import org.example.model.Vote;
 import org.example.repository.VoteRepository;
