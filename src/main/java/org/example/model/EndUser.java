@@ -10,15 +10,15 @@ public class EndUser {
     private Long id;
     private String username;
     private String email;
-    private String passwordHash;
+    private String password;
 
     public EndUser(){}
 
-    public EndUser(Long id, String username, String email, String passwordHash) {
+    public EndUser(Long id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.passwordHash = passwordHash;
+        this.password = password;
     }
 
     // Getters and Setters
@@ -34,8 +34,8 @@ public class EndUser {
         return email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
     public void setId(Long id) {
@@ -50,7 +50,7 @@ public class EndUser {
         this.email = email;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -52,9 +52,9 @@ public class EndUserService {
         EndUser endUser = endUserRepository.findByUsername(username);
 
         // Check if the user exists and if the password matches
-        if (endUser == null || !endUser.getPasswordHash().equals(password)) {
+        if (endUser == null || !endUser.getPassword().equals(password)) {
 
-            throw new Exception("Passwordhash: " + endUser.getPasswordHash() + " entered password: " + password);
+            throw new Exception("Passwordhash: " + endUser.getPassword() + " entered password: " + password);
         }
 
         // Generate a token (for simplicity, returning a placeholder string)

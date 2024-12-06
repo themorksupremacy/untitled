@@ -7,11 +7,11 @@ DROP TABLE IF EXISTS EndUser;
 CREATE TABLE EndUser(
     id bigint PRIMARY KEY,
     username varchar(255),
-    passwordHash varchar(255),
+    password varchar(255),
     email varchar(255)
 );
-INSERT INTO EndUser(id, username, passwordHash, email) VALUES(1, 'Mork', '1234', 'mork@mail.com');
-INSERT INTO EndUser(id, username, passwordHash, email) VALUES(2, 'Kieran', '1234', 'kieran@mail.com');
+INSERT INTO EndUser(id, username, password, email) VALUES(1, 'Mork', '1234', 'mork@mail.com');
+INSERT INTO EndUser(id, username, password, email) VALUES(2, 'Kieran', '1234', 'kieran@mail.com');
 
 -- Create Post Table
 CREATE TABLE Post(
