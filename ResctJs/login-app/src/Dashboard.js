@@ -1,6 +1,7 @@
 // src/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Dashboard.css';  // Import Dashboard-specific CSS
 
 function Dashboard({ token }) {
   const [data, setData] = useState(null);
@@ -27,25 +28,25 @@ function Dashboard({ token }) {
   }, [token]);
 
   return (
-    <div>
-      <h1>Dashboard</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {data ? (
-        <>
-          <ul>
-            {data.map((post) => (
-              <li key={post.id}>
-                <p><strong>Content:</strong> {post.content}</p>
-                <p><strong>Location:</strong> {post.location}</p>
-                <p><strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}</p>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+      <div className="dashboard-container">
+        <h1>Dashboard</h1>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {data ? (
+            <>
+              <ul>
+                {data.map((post) => (
+                    <li key={post.id}>
+                      <p><strong>Content:</strong> {post.content}</p>
+                      <p><strong>Location:</strong> {post.location}</p>
+                      <p><strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}</p>
+                    </li>
+                ))}
+              </ul>
+            </>
+        ) : (
+            <p>Loading...</p>
+        )}
+      </div>
   );
 }
 
