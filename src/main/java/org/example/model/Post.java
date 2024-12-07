@@ -67,7 +67,7 @@ public class Post {
         return endUser;
     }
 
-    public void setUserId(EndUser endUser) {
+    public void setEndUser(EndUser endUser) {
         this.endUser = endUser;
     }
 
