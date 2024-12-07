@@ -44,6 +44,12 @@ public class CommentService {
         return mapToDTO(savedComment);
     }
 
+    public List<CommentDTO> getCommentsByPostId(Long postId) {
+        return commentRepository.findByPostId(postId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());  // Assuming CommentRepository has this method
+    }
+
     // Delete a comment by its ID
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);

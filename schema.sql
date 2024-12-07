@@ -26,15 +26,23 @@ INSERT INTO Post(id, content, timestamp, location, userid) VALUES(1, 'Went to cl
 INSERT INTO Post(id, content, timestamp, location, userid) VALUES(2, 'Did not go to class!', '2024-11-09 15:45:21', 'Esslingen', 2);
 
 -- Create Comment Table
-CREATE TABLE Comment(
+CREATE TABLE Comment (
     id bigint PRIMARY KEY,
     content varchar(255),
     timestamp timestamp,       -- Use 'timestamp' instead of 'DateTime'
     postId bigint,
-    CONSTRAINT fk_post FOREIGN KEY (postId) REFERENCES Post(id)
+    userId bigint,             -- Added userId column
+    CONSTRAINT fk_post FOREIGN KEY (postId) REFERENCES Post(id),
+    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES EndUser(id)  -- Foreign key to User table
 );
-INSERT INTO Comment(id, content, timestamp, postId) VALUES(1, 'Good job!', '2024-11-09 15:45:21', 2);
-INSERT INTO Comment(id, content, timestamp, postId) VALUES(2, 'Well done!', '2024-11-09 15:45:21', 1);
+
+-- Example data insertion with userId
+INSERT INTO Comment(id, content, timestamp, postId, userId)
+VALUES(1, 'Good job!', '2024-11-09 15:45:21', 2, 1);
+
+INSERT INTO Comment(id, content, timestamp, postId, userId)
+VALUES(2, 'Well done!', '2024-11-09 15:45:21', 1, 2);
+
 
 -- Create Vote Table
 CREATE TABLE Vote(

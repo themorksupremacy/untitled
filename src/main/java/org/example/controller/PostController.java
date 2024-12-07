@@ -3,30 +3,45 @@
 package org.example.controller;
 
 import org.example.dto.PostDTO;
+import org.example.dto.CommentDTO;
 import org.example.service.PostService;
+import org.example.service.CommentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/dashboard")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
-    // Get all posts
-    @GetMapping
+    // Get all posts along with comments
+    @GetMapping("/posts")
     public List<PostDTO> getAllPosts() {
-        return postService.getAllPosts();
+        List<PostDTO> posts = postService.getAllPosts();
+
+        // For each post, fetch its associated comments
+        for (PostDTO post : posts) {
+            List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
+            post.setComments(comments);  // Assuming PostDTO has a setComments method
+        }
+
+        return posts;
     }
 
     // Get a post by ID
     @GetMapping("/post/{id}")
     public PostDTO getPostById(@PathVariable Long id) {
-        return postService.getPostById(id);
+        PostDTO post = postService.getPostById(id);
+        List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
+        post.setComments(comments);  // Assuming PostDTO has a setComments method
+        return post;
     }
 
     // Create a new post

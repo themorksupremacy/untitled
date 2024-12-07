@@ -5,12 +5,14 @@ package org.example.dto;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostDTO {
     private Long id;
     private String content;
     private Timestamp timestamp;
     private String location;
+    private List<CommentDTO> comments;
 
     // Constructors
     public PostDTO() {}
@@ -46,5 +48,13 @@ public class PostDTO {
     }
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDTO> comments) {
+        this.comments = comments;
     }
 }

@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.CommentDTO;
+import org.example.model.Comment;
 import org.example.service.CommentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
