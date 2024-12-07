@@ -28,7 +28,7 @@ public class Vote {
         this.comment = comment;
     }
 
-    public Long getId() {
+    public Long getVoteId() {
 
         return id;
     }
@@ -48,7 +48,7 @@ public class Vote {
         this.type = type;
     }
 
-    public EndUser getUser() {
+    public EndUser getEndUser() {
 
         return user;
     }

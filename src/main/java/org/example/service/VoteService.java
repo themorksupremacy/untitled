@@ -41,6 +41,6 @@ public class VoteService {
     }
 
     private VoteDTO mapToDTO(Vote vote){
-        return new VoteDTO(vote.getId(), vote.getType(), vote.getUser().getId(), vote.getComment().getCommentId());
+        return new VoteDTO(vote.getVoteId(), vote.getType(), vote.getEndUser().getId(), vote.getComment().getCommentId());
     }
 }

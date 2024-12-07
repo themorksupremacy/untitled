@@ -3,6 +3,7 @@
 package org.example.dto;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class CommentDTO {
     private long id;
@@ -10,17 +11,19 @@ public class CommentDTO {
     private Timestamp timestamp;
     private Long postId; // Reference to the associated Post entity by ID
     private Long userId; // Reference to the associated EndUser entity by ID
-    private String username; // Added field for the username
+    private String username;
+    private List<VoteDTO> votes;//
 
     public CommentDTO() {}
 
-    public CommentDTO(long id, String content, Timestamp timestamp, Long postId, Long userId, String username) {
+    public CommentDTO(long id, String content, Timestamp timestamp, Long postId, Long userId, String username, List<VoteDTO> votes) {
         this.id = id;
         this.content = content;
         this.timestamp = timestamp;
         this.postId = postId;
         this.userId = userId;
         this.username = username;
+        this.votes = votes;
     }
 
     // Getters and Setters
@@ -70,5 +73,13 @@ public class CommentDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public List<VoteDTO> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<VoteDTO> votes) {
+        this.votes = votes;
     }
 }

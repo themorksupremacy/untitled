@@ -1,12 +1,15 @@
 package org.example.service;
 
 import org.example.dto.CommentDTO;
+import org.example.dto.VoteDTO;
 import org.example.model.Comment;
 import org.example.model.EndUser;
 import org.example.model.Post;
+import org.example.model.Vote;
 import org.example.repository.CommentRepository;
 import org.example.repository.EndUserRepository;
 import org.example.repository.PostRepository;
+import org.example.repository.VoteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +21,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final EndUserRepository endUserRepository;
+    private final VoteRepository voteRepository;
 
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, EndUserRepository endUserRepository) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, EndUserRepository endUserRepository, VoteRepository voteRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.endUserRepository = endUserRepository;
+        this.voteRepository = voteRepository;
     }
 
     // Get all comments as DTOs
@@ -44,7 +49,7 @@ public class CommentService {
         return mapToDTO(savedComment);
     }
 
-    // Get comments by Post ID, with usernames included
+    // Get comments by Post ID, with votes and usernames included
     public List<CommentDTO> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostId(postId).stream()
                 .map(this::mapToDTO)
@@ -56,10 +61,13 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
-    // Map Comment entity to DTO, now including the username
+    // Map Comment entity to DTO, now including the username and votes
     private CommentDTO mapToDTO(Comment comment) {
         EndUser user = comment.getEndUser(); // Get associated EndUser to retrieve the username
         String username = (user != null) ? user.getUsername() : "Unknown User"; // Set username (fallback if user is null)
+        List<VoteDTO> votes = voteRepository.findByCommentId(comment.getCommentId()).stream()
+                .map(this::mapVoteToDTO)
+                .collect(Collectors.toList());
 
         return new CommentDTO(
                 comment.getCommentId(),
@@ -67,7 +75,18 @@ public class CommentService {
                 comment.getTimestamp(),
                 comment.getPost() != null ? comment.getPost().getId() : null,
                 comment.getEndUser() != null ? comment.getEndUser().getId() : null,
-                username // Add the username field to the DTO
+                username,
+                votes // Add votes to the DTO
+        );
+    }
+
+    // Map Vote entity to VoteDTO
+    private VoteDTO mapVoteToDTO(Vote vote) {
+        return new VoteDTO(
+                vote.getVoteId(),
+                vote.getType(),
+                vote.getEndUser().getId(),
+                vote.getComment().getCommentId()
         );
     }
 

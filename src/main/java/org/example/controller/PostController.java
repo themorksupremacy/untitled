@@ -19,15 +19,15 @@ public class PostController {
         this.commentService = commentService;
     }
 
-    // Get all posts along with comments
+    // Get all posts along with comments and votes
     @GetMapping("/posts")
     public List<PostDTO> getAllPosts() {
         List<PostDTO> posts = postService.getAllPosts();
 
-        // For each post, fetch its associated comments
+        // For each post, fetch its associated comments and include votes
         for (PostDTO post : posts) {
             List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
-            post.setComments(comments);  // Ensure PostDTO has setComments method
+            post.setComments(comments); // Ensure PostDTO has setComments method
         }
 
         return posts;
@@ -38,7 +38,7 @@ public class PostController {
     public PostDTO getPostById(@PathVariable Long id) {
         PostDTO post = postService.getPostById(id);
         List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
-        post.setComments(comments);  // Ensure PostDTO has setComments method
+        post.setComments(comments); // Ensure PostDTO has setComments method
         return post;
     }
 

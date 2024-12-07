@@ -43,6 +43,12 @@ VALUES(1, 'Good job!', '2024-11-09 15:45:21', 2, 1);
 INSERT INTO Comment(id, content, timestamp, postId, userId)
 VALUES(2, 'Well done!', '2024-11-09 15:45:21', 1, 2);
 
+INSERT INTO Comment(id, content, timestamp, postId, userId)
+VALUES(3, 'Well done!', '2024-11-09 15:45:21', 1, 2);
+
+INSERT INTO Comment(id, content, timestamp, postId, userId)
+VALUES(4, 'Well done!', '2024-11-09 15:45:21', 1, 2);
+
 
 -- Create Vote Table
 CREATE TABLE Vote(
@@ -56,3 +62,6 @@ CREATE TABLE Vote(
 -- Assuming Vote table has initial votes
 INSERT INTO Vote(id, type, userId, commentId) VALUES(1, TRUE, 1, 1);
 INSERT INTO Vote(id, type, userId, commentId) VALUES(2, FALSE, 2, 2);
+
+INSERT INTO Vote(id, type, userId, commentId) VALUES(3, TRUE, 1, 2);
+INSERT INTO Vote(id, type, userId, commentId) VALUES(4, FALSE, 2, 1);
