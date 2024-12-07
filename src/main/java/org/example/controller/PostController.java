@@ -1,5 +1,3 @@
-// src/main/java/org/example/controller/PostController.java
-
 package org.example.controller;
 
 import org.example.dto.PostDTO;
@@ -29,7 +27,7 @@ public class PostController {
         // For each post, fetch its associated comments
         for (PostDTO post : posts) {
             List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
-            post.setComments(comments);  // Assuming PostDTO has a setComments method
+            post.setComments(comments);  // Ensure PostDTO has setComments method
         }
 
         return posts;
@@ -40,7 +38,7 @@ public class PostController {
     public PostDTO getPostById(@PathVariable Long id) {
         PostDTO post = postService.getPostById(id);
         List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
-        post.setComments(comments);  // Assuming PostDTO has a setComments method
+        post.setComments(comments);  // Ensure PostDTO has setComments method
         return post;
     }
 

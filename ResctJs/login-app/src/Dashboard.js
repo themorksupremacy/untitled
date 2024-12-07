@@ -48,7 +48,7 @@ function Dashboard({ token }) {
                             {post.comments.map((comment) => (
                               <li key={comment.id}>
                                 <p><strong>Comment:</strong> {comment.content}</p>
-                                <p><strong>By User:</strong> {comment.endUser}</p>
+                                <p><strong>By User:</strong> {comment.username}</p> {/* Display the username */}
                                 <p><strong>Timestamp:</strong> {new Date(comment.timestamp).toLocaleString()}</p>
                               </li>
                             ))}

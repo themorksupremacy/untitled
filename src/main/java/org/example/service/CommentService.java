@@ -44,10 +44,11 @@ public class CommentService {
         return mapToDTO(savedComment);
     }
 
+    // Get comments by Post ID, with usernames included
     public List<CommentDTO> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostId(postId).stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());  // Assuming CommentRepository has this method
+                .collect(Collectors.toList());
     }
 
     // Delete a comment by its ID
@@ -55,14 +56,18 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
-    // Map Comment entity to DTO
+    // Map Comment entity to DTO, now including the username
     private CommentDTO mapToDTO(Comment comment) {
+        EndUser user = comment.getEndUser(); // Get associated EndUser to retrieve the username
+        String username = (user != null) ? user.getUsername() : "Unknown User"; // Set username (fallback if user is null)
+
         return new CommentDTO(
                 comment.getCommentId(),
                 comment.getContent(),
                 comment.getTimestamp(),
                 comment.getPost() != null ? comment.getPost().getId() : null,
-                comment.getEndUser() != null ? comment.getEndUser().getId() : null
+                comment.getEndUser() != null ? comment.getEndUser().getId() : null,
+                username // Add the username field to the DTO
         );
     }
 
