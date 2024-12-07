@@ -9,49 +9,163 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f1f1f1; /* Light gray background */
+    background-color: #e6ecf0; /* Lighter background for a Twitter-like feel */
     color: #333;
     line-height: 1.6;
     height: 100vh;
     padding: 20px;
+    overflow-x: hidden;
 }
 
+/* Dashboard container styling */
 .dashboard-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 960px; /* Widened container for a desktop view */
     background-color: #fff;
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadows */
+    margin: 40px auto;
+    text-align: left;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
 }
 
+/* Header */
 h1 {
-    font-size: 28px;
-    color: #333;
+    font-size: 36px;
+    color: #1DA1F2; /* Twitter-like blue */
     margin-bottom: 20px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
 }
 
+/* List styling */
 ul {
     list-style-type: none;
     padding: 0;
 }
 
 li {
-    background: #f9f9f9;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 12px; /* Slightly rounded edges */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadows */
+    transition: all 0.3s ease;
+}
+
+li:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Slightly bigger shadow on hover */
 }
 
 li p {
-    margin: 5px 0;
+    margin: 8px 0;
+    color: #333;
 }
 
 li p strong {
-    color: #4CAF50;
+    color: #1DA1F2; /* Highlight strong text in Twitter-like blue */
+}
+
+/* Button to toggle comments */
+.toggle-comments-btn {
+    padding: 12px 24px;
+    margin-top: 12px;
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Rounded button for a modern look */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.toggle-comments-btn:hover {
+    background-color: #1991DB; /* Darker blue on hover */
+}
+
+/* Vote Buttons Styling */
+.vote-btn {
+    padding: 10px;
+    margin: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 20px; /* Rounded buttons */
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* Vote Count Styling */
+.vote-count {
+    font-size: 14px;
+    color: #333;
+    margin-left: 8px;
+}
+
+/* Active Upvote Button */
+.upvote {
+    background-color: #e1e8ed; /* Light gray */
+    color: #333;
+}
+
+.upvote.active-upvote {
+    background-color: #1DA1F2; /* Twitter-like blue */
+    color: white;
+}
+
+.upvote:hover {
+    background-color: #1991DB; /* Darker blue on hover */
+}
+
+/* Active Downvote Button */
+.downvote {
+    background-color: #e1e8ed; /* Light gray */
+    color: #333;
+}
+
+.downvote.active-downvote {
+    background-color: #F45D5D; /* Red color for downvotes */
+    color: white;
+}
+
+.downvote:hover {
+    background-color: #D93636; /* Darker red on hover */
+}
+
+/* Votes section */
+.votes-section {
+    margin-top: 10px;
+}
+
+/* Make the layout responsive for larger screens */
+@media (min-width: 768px) {
+    .dashboard-container {
+        padding: 50px; /* More padding on larger screens */
+    }
+
+    h1 {
+        font-size: 42px; /* Larger header text */
+    }
+
+    li {
+        padding: 30px; /* More padding around posts */
+    }
+
+    .toggle-comments-btn {
+        font-size: 18px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-container {
+        max-width: 1200px; /* Further increase max-width */
+    }
 }
