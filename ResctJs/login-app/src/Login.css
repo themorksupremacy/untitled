@@ -9,7 +9,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f8fa;
+  background-color: #e6ecf0; /* Same background as Dashboard */
   color: #333;
   line-height: 1.6;
   height: 100vh;
@@ -26,19 +26,19 @@ body {
   background-color: #fff;
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadows, same as Dashboard */
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 3px solid #4CAF50;
+  border: 3px solid #1DA1F2; /* Same border color as the Dashboard button */
 }
 
 /* Login form heading */
 h2 {
   font-size: 24px;
-  color: #333;
+  color: #1DA1F2; /* Matching header color to Dashboard's blue */
   margin-bottom: 20px;
   font-weight: 600;
   text-transform: uppercase;
@@ -56,11 +56,12 @@ input[type="password"] {
   background-color: #f9f9f9;
 }
 
+/* Button */
 button {
   width: 100%;
   padding: 12px 20px;
   font-size: 16px;
-  background: #4CAF50;
+  background-color: #1DA1F2; /* Matching button color to Dashboard */
   color: white;
   border: none;
   border-radius: 25px;
@@ -69,5 +70,5 @@ button {
 }
 
 button:hover {
-  background: #45a049;
+  background-color: #1991DB; /* Darker blue on hover, same as Dashboard */
 }
