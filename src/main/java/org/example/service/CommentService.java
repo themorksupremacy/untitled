@@ -13,7 +13,6 @@ import org.example.repository.VoteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,11 +62,15 @@ public class CommentService {
 
     // Map Comment entity to DTO, now including the username and votes
     private CommentDTO mapToDTO(Comment comment) {
-        EndUser user = comment.getEndUser(); // Get associated EndUser to retrieve the username
-        String username = (user != null) ? user.getUsername() : "Unknown User"; // Set username (fallback if user is null)
+        EndUser user = comment.getEndUser();
+        String username = (user != null) ? user.getUsername() : "Unknown User";
         List<VoteDTO> votes = voteRepository.findByCommentId(comment.getCommentId()).stream()
                 .map(this::mapVoteToDTO)
                 .collect(Collectors.toList());
+
+        // Calculate upvote and downvote counts
+        int upvoteCount = (int) votes.stream().filter(v -> Boolean.TRUE.equals(v.getType())).count();
+        int downvoteCount = (int) votes.stream().filter(v -> Boolean.FALSE.equals(v.getType())).count();
 
         return new CommentDTO(
                 comment.getCommentId(),
@@ -76,7 +79,9 @@ public class CommentService {
                 comment.getPost() != null ? comment.getPost().getId() : null,
                 comment.getEndUser() != null ? comment.getEndUser().getId() : null,
                 username,
-                votes // Add votes to the DTO
+                votes,
+                upvoteCount,
+                downvoteCount
         );
     }
 

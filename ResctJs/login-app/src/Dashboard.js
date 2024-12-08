@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Dashboard.css"; // Import Dashboard-specific CSS
+import "./Dashboard.css";
 
 function Dashboard({ token }) {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [votes, setVotes] = useState({}); // Track votes for each comment
   const [openComments, setOpenComments] = useState({}); // Track open/close state of comments for each post
-  const [clickCounts, setClickCounts] = useState({}); // Track the number of clicks for upvotes and downvotes
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,24 +36,31 @@ function Dashboard({ token }) {
       return { ...prevVotes, [commentId]: currentVote === voteType ? null : voteType };
     });
 
-    setClickCounts((prevCounts) => {
-      const currentCount = prevCounts[commentId] || { up: 0, down: 0 };
-      let updatedCount;
+    // Update the UI immediately
+    const updatedData = data.map((post) =>
+      post.id === postId
+        ? {
+            ...post,
+            comments: post.comments.map((comment) =>
+              comment.id === commentId
+                ? {
+                    ...comment,
+                    upvoteCount:
+                      voteType === "up"
+                        ? comment.upvoteCount + (votes[commentId] === "up" ? -1 : 1)
+                        : comment.upvoteCount - (votes[commentId] === "up" ? 1 : 0),
+                    downvoteCount:
+                      voteType === "down"
+                        ? comment.downvoteCount + (votes[commentId] === "down" ? -1 : 1)
+                        : comment.downvoteCount - (votes[commentId] === "down" ? 1 : 0),
+                  }
+                : comment
+            ),
+          }
+        : post
+    );
 
-      if (voteType === "up") {
-        updatedCount = {
-          up: currentCount.up + (votes[commentId] === "up" ? -1 : 1),
-          down: currentCount.down - (votes[commentId] === "down" ? 1 : 0),
-        };
-      } else if (voteType === "down") {
-        updatedCount = {
-          up: currentCount.up - (votes[commentId] === "up" ? 1 : 0),
-          down: currentCount.down + (votes[commentId] === "down" ? -1 : 1),
-        };
-      }
-
-      return { ...prevCounts, [commentId]: updatedCount };
-    });
+    setData(updatedData); // Update the local state with the new vote counts
 
     try {
       // Send the vote to the backend API
@@ -62,27 +68,6 @@ function Dashboard({ token }) {
         userId: 1, // Replace with actual user ID
         voteType,
       });
-
-      // Update the UI with the new vote count
-      const updatedData = data.map((post) =>
-          post.id === postId
-              ? {
-                ...post,
-                comments: post.comments.map((comment) =>
-                    comment.id === commentId
-                        ? {
-                          ...comment,
-                          vote_count:
-                              voteType === "up"
-                                  ? comment.vote_count + (votes[commentId] === "up" ? -1 : 1)
-                                  : comment.vote_count + (votes[commentId] === "down" ? -1 : 1),
-                        }
-                        : comment
-                ),
-              }
-              : post
-      );
-      setData(updatedData); // Update the local state with the new vote count
     } catch (error) {
       console.error("Error voting:", error);
     }
@@ -97,87 +82,88 @@ function Dashboard({ token }) {
   };
 
   return (
-      <div className="dashboard-container">
-        <h1>Dashboard</h1>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {data ? (
-            <ul>
-              {data.map((post) => (
-                  <li key={post.id} className="post">
-                    {/* Render the post's content */}
-                    <p>
-                      <strong>Post by:</strong> {post.username}
-                    </p>
-                    <p>
-                      <strong>Content:</strong> {post.content}
-                    </p>
-                    <p>
-                      <strong>Location:</strong> {post.location}
-                    </p>
-                    <p>
-                      <strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}
-                    </p>
+    <div className="dashboard-container">
+      <h1>Dashboard</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {data ? (
+        <ul>
+          {data.map((post) => (
+            <li key={post.id} className="post">
+              {/* Render the post's content */}
+              <p>
+                <strong>Post by:</strong> {post.username}
+              </p>
+              <p>
+                <strong>Content:</strong> {post.content}
+              </p>
+              <p>
+                <strong>Location:</strong> {post.location}
+              </p>
+              <p>
+                <strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}
+              </p>
 
-                    {/* Toggle Comments button */}
-                    <button
-                        className="toggle-comments-btn"
-                        onClick={() => toggleComments(post.id)}
-                    >
-                      {openComments[post.id] ? "Hide Comments" : "Show Comments"}
-                    </button>
+              {/* Toggle Comments button */}
+              <button
+                className="toggle-comments-btn"
+                onClick={() => toggleComments(post.id)}
+              >
+                {openComments[post.id] ? "Hide Comments" : "Show Comments"}
+              </button>
 
-                    {/* Render comments if visible */}
-                    {openComments[post.id] && post.comments && post.comments.length > 0 && (
-                        <div className="comments-section">
-                          <ul>
-                            {post.comments.map((comment) => (
-                                <li key={comment.id} className="comment">
-                                  {/* Comment Content */}
-                                  <p>
-                                    <strong>{comment.username}</strong>: {comment.content}
-                                  </p>
-                                  <p>
-                                    <strong>Timestamp:</strong> {new Date(comment.timestamp).toLocaleString()}
-                                  </p>
+              {/* Render comments if visible */}
+              {openComments[post.id] && post.comments && post.comments.length > 0 && (
+                <div className="comments-section">
+                  <ul>
+                    {post.comments.map((comment) => (
+                      <li key={comment.id} className="comment">
+                        {/* Comment Content */}
+                        <p>
+                          <strong>{comment.username}</strong>: {comment.content}
+                        </p>
+                        <p>
+                          <strong>Timestamp:</strong>{" "}
+                          {new Date(comment.timestamp).toLocaleString()}
+                        </p>
 
-                                  {/* Vote Section with Vote Counts */}
-                                  <div className="votes-section">
-                                    <button
-                                        className={`vote-btn upvote ${
-                                            votes[comment.id] === "up" ? "active-upvote" : ""
-                                        }`}
-                                        onClick={() => handleVote(comment.id, "up", post.id)}
-                                    >
-                                      ↑
-                                    </button>
-                                    <span className="vote-count">
-                            {clickCounts[comment.id]?.up || 0} {/* Show upvote click count */}
+                        {/* Vote Section with Vote Counts */}
+                        <div className="votes-section">
+                          <button
+                            className={`vote-btn upvote ${
+                              votes[comment.id] === "up" ? "active-upvote" : ""
+                            }`}
+                            onClick={() => handleVote(comment.id, "up", post.id)}
+                          >
+                            ↑
+                          </button>
+                          <span className="vote-count">
+                            {comment.upvoteCount || 0} {/* Display upvote count */}
                           </span>
 
-                                    <button
-                                        className={`vote-btn downvote ${
-                                            votes[comment.id] === "down" ? "active-downvote" : ""
-                                        }`}
-                                        onClick={() => handleVote(comment.id, "down", post.id)}
-                                    >
-                                      ↓
-                                    </button>
-                                    <span className="vote-count">
-                            {clickCounts[comment.id]?.down || 0} {/* Show downvote click count */}
+                          <button
+                            className={`vote-btn downvote ${
+                              votes[comment.id] === "down" ? "active-downvote" : ""
+                            }`}
+                            onClick={() => handleVote(comment.id, "down", post.id)}
+                          >
+                            ↓
+                          </button>
+                          <span className="vote-count">
+                            {comment.downvoteCount || 0} {/* Display downvote count */}
                           </span>
-                                  </div>
-                                </li>
-                            ))}
-                          </ul>
                         </div>
-                    )}
-                  </li>
-              ))}
-            </ul>
-        ) : (
-            <p>Loading...</p>
-        )}
-      </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
   );
 }
 

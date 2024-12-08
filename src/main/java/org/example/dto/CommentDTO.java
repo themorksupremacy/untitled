@@ -1,5 +1,3 @@
-// src/main/java/org/example/dto/CommentDTO.java
-
 package org.example.dto;
 
 import java.sql.Timestamp;
@@ -12,11 +10,13 @@ public class CommentDTO {
     private Long postId; // Reference to the associated Post entity by ID
     private Long userId; // Reference to the associated EndUser entity by ID
     private String username;
-    private List<VoteDTO> votes;//
+    private List<VoteDTO> votes; // List of votes
+    private int upvoteCount; // Added field for upvotes
+    private int downvoteCount; // Added field for downvotes
 
     public CommentDTO() {}
 
-    public CommentDTO(long id, String content, Timestamp timestamp, Long postId, Long userId, String username, List<VoteDTO> votes) {
+    public CommentDTO(long id, String content, Timestamp timestamp, Long postId, Long userId, String username, List<VoteDTO> votes, int upvoteCount, int downvoteCount) {
         this.id = id;
         this.content = content;
         this.timestamp = timestamp;
@@ -24,6 +24,8 @@ public class CommentDTO {
         this.userId = userId;
         this.username = username;
         this.votes = votes;
+        this.upvoteCount = upvoteCount;
+        this.downvoteCount = downvoteCount;
     }
 
     // Getters and Setters
@@ -81,5 +83,21 @@ public class CommentDTO {
 
     public void setVotes(List<VoteDTO> votes) {
         this.votes = votes;
+    }
+
+    public int getUpvoteCount() {
+        return upvoteCount;
+    }
+
+    public void setUpvoteCount(int upvoteCount) {
+        this.upvoteCount = upvoteCount;
+    }
+
+    public int getDownvoteCount() {
+        return downvoteCount;
+    }
+
+    public void setDownvoteCount(int downvoteCount) {
+        this.downvoteCount = downvoteCount;
     }
 }
