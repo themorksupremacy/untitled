@@ -30,13 +30,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostDTO> getAllPosts() {
         List<PostDTO> posts = postService.getAllPosts();
-
-        // For each post, fetch its associated comments
         for (PostDTO post : posts) {
             List<CommentDTO> comments = commentService.getCommentsByPostId(post.getId());
             post.setComments(comments); // Ensure PostDTO has setComments method
         }
-
         return posts;
     }
 
@@ -50,13 +47,13 @@ public class PostController {
     }
 
     // Create a new post
-    @PostMapping
+    @PostMapping("/posts")  // Specify the path for creating posts
     public PostDTO savePost(@RequestBody PostDTO postDTO) {
         return postService.savePost(postDTO);
     }
 
     // Delete a post by ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/posts/{id}")
     public void deletePost(@PathVariable Long id) {
         postService.deletePost(id);
     }
@@ -82,28 +79,4 @@ public class PostController {
                     .body("Error casting vote: " + e.getMessage());
         }
     }
-
-
-    // In your VoteController.java
-    @DeleteMapping("/comments/{commentId}/removeVote")
-    public ResponseEntity<Void> removeVote(@PathVariable Long commentId, @RequestParam Long userId) {
-        voteService.removeVote(commentId, userId);
-        return ResponseEntity.ok().build();
-    }
-
-    // Create a new comment
-    @PostMapping("/comments")
-    public ResponseEntity<CommentDTO> addComment(@RequestBody CommentDTO commentDTO) {
-        try {
-            // Save the comment using the service layer
-            CommentDTO savedComment = commentService.saveComment(commentDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-
 }
