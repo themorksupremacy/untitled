@@ -26,5 +26,6 @@ public class LoginController {
             return ResponseEntity.status(401).body(new LoginResponse(e.getMessage(), null, 0));
         }
     }
+
 }
 
