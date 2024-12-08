@@ -4,25 +4,23 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class PostDTO {
-    private Long id;
+    private Long id; // This can be null for new posts
     private String content;
     private Timestamp timestamp;
     private String location;
     private List<CommentDTO> comments;
-    private String username;  // Add username field
-    private Long userId;  // Add userId field
+    private String username;
+    private Long userId;
 
-    // Constructors
+    // Default constructor
     public PostDTO() {}
 
-    // Constructor with username and userId
-    public PostDTO(Long id, String content, Timestamp timestamp, String location, String username, Long userId) {
-        this.id = id;
+    // Constructor for creating a new post without the ID
+    public PostDTO(String content, Timestamp timestamp, String location, Long userId) {
         this.content = content;
         this.timestamp = timestamp;
         this.location = location;
-        this.username = username;  // Set username in constructor
-        this.userId = userId;  // Set userId in constructor
+        this.userId = userId;
     }
 
     // Getters and Setters
@@ -63,18 +61,18 @@ public class PostDTO {
     }
 
     public String getUsername() {
-        return username;  // Get username
+        return username;
     }
 
     public void setUsername(String username) {
-        this.username = username;  // Set username
+        this.username = username;
     }
 
     public Long getUserId() {
-        return userId;  // Get userId
+        return userId;
     }
 
     public void setUserId(Long userId) {
-        this.userId = userId;  // Set userId
+        this.userId = userId;
     }
 }
