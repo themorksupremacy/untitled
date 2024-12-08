@@ -83,5 +83,11 @@ public class PostController {
         }
     }
 
+    // In your VoteController.java
+    @DeleteMapping("/comments/{commentId}/removeVote")
+    public ResponseEntity<Void> removeVote(@PathVariable Long commentId, @RequestParam Long userId) {
+        voteService.removeVote(commentId, userId);
+        return ResponseEntity.ok().build();
+    }
 
 }

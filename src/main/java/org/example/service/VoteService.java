@@ -83,5 +83,21 @@ public class VoteService {
         return new VoteDTO(vote.getVoteId(), vote.getType(), vote.getEndUser().getId(), vote.getComment().getCommentId());
     }
 
+    // In VoteService.java
+    public void removeVote(Long commentId, Long userId) {
+        // Find the comment by ID
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Comment ID"));
+
+        // Find the user by ID
+        EndUser user = endUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User ID"));
+
+        // Check if the user has voted
+        Optional<Vote> existingVote = voteRepository.findByCommentAndEndUser(comment, user);
+
+        // If a vote exists, remove it
+        existingVote.ifPresent(voteRepository::delete);
+    }
 
 }

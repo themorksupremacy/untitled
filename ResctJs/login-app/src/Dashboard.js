@@ -27,6 +27,16 @@ function Dashboard() {
           },
         });
         setData(response.data);
+
+        // Set initial votes state based on user's previous votes
+        const initialVotes = {};
+        response.data.forEach(post => {
+          post.comments.forEach(comment => {
+            initialVotes[comment.id] = comment.userVoteType; // Assuming the server returns the user's vote type for each comment
+          });
+        });
+        setVotes(initialVotes);
+
       } catch (err) {
         console.error(err);
         setError("Failed to fetch dashboard data.");
@@ -39,42 +49,77 @@ function Dashboard() {
   }, [userId]);
 
   const handleVote = async (commentId, voteType, postId) => {
-    setVotes((prevVotes) => ({
-      ...prevVotes,
-      [commentId]: prevVotes[commentId] === voteType ? null : voteType,
-    }));
+    const previousVote = votes[commentId]; // Get the previous vote state
 
-    const updatedData = data.map((post) =>
-      post.id === postId
-        ? {
-            ...post,
-            comments: post.comments.map((comment) =>
-              comment.id === commentId
-                ? {
-                    ...comment,
-                    upvoteCount:
-                      voteType === "up"
-                        ? comment.upvoteCount + (votes[commentId] === "up" ? -1 : 1)
-                        : comment.upvoteCount - (votes[commentId] === "up" ? 1 : 0),
-                    downvoteCount:
-                      voteType === "down"
-                        ? comment.downvoteCount + (votes[commentId] === "down" ? -1 : 1)
-                        : comment.downvoteCount - (votes[commentId] === "down" ? 1 : 0),
-                  }
-                : comment
-            ),
-          }
-        : post
-    );
-    setData(updatedData);
+    // If the user voted the same type, remove the vote
+    if (previousVote === voteType) {
+      setVotes(prevVotes => ({
+        ...prevVotes,
+        [commentId]: null // Remove the vote from state
+      }));
 
-    try {
-      await axios.post(`http://localhost:8080/dashboard/comments/${commentId}/vote`, {
-        userId: userId, // Use the userId from localStorage
-        type: voteType === "up",
-      });
-    } catch (error) {
-      console.error("Error voting:", error);
+      // Update the vote count in the frontend
+      const updatedData = data.map(post =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments.map(comment =>
+                comment.id === commentId
+                  ? {
+                      ...comment,
+                      upvoteCount: voteType === "up" ? comment.upvoteCount - 1 : comment.upvoteCount,
+                      downvoteCount: voteType === "down" ? comment.downvoteCount - 1 : comment.downvoteCount,
+                    }
+                  : comment
+              ),
+            }
+          : post
+      );
+      setData(updatedData);
+
+      // Remove the vote in the backend
+      try {
+        await axios.post(`http://localhost:8080/dashboard/comments/${commentId}/removeVote`, {
+          userId: userId,
+        });
+      } catch (error) {
+        console.error("Error removing vote:", error);
+      }
+    } else {
+      // If the user is changing their vote or voting for the first time
+      setVotes(prevVotes => ({
+        ...prevVotes,
+        [commentId]: voteType, // Set the new vote in state
+      }));
+
+      // Update the vote count in the frontend
+      const updatedData = data.map(post =>
+        post.id === postId
+          ? {
+              ...post,
+              comments: post.comments.map(comment =>
+                comment.id === commentId
+                  ? {
+                      ...comment,
+                      upvoteCount: voteType === "up" ? comment.upvoteCount + 1 : comment.upvoteCount,
+                      downvoteCount: voteType === "down" ? comment.downvoteCount + 1 : comment.downvoteCount,
+                    }
+                  : comment
+              ),
+            }
+          : post
+      );
+      setData(updatedData);
+
+      // Save the vote in the backend
+      try {
+        await axios.post(`http://localhost:8080/dashboard/comments/${commentId}/vote`, {
+          userId: userId,
+          type: voteType === "up",
+        });
+      } catch (error) {
+        console.error("Error voting:", error);
+      }
     }
   };
 
