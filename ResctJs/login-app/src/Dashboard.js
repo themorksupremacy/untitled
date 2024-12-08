@@ -7,6 +7,7 @@ function Dashboard({ token }) {
   const [error, setError] = useState("");
   const [votes, setVotes] = useState({}); // Track votes for each comment
   const [openComments, setOpenComments] = useState({}); // Track open/close state of comments for each post
+  const [clickCounts, setClickCounts] = useState({}); // Track the number of clicks for upvotes and downvotes
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,12 +33,27 @@ function Dashboard({ token }) {
   // Function to handle voting for comments (upvote or downvote)
   const handleVote = async (commentId, voteType, postId) => {
     setVotes((prevVotes) => {
-      // Toggle vote (upvote or downvote)
       const currentVote = prevVotes[commentId];
-      if (currentVote === voteType) {
-        return { ...prevVotes, [commentId]: null }; // If already voted, reset vote
+      return { ...prevVotes, [commentId]: currentVote === voteType ? null : voteType };
+    });
+
+    setClickCounts((prevCounts) => {
+      const currentCount = prevCounts[commentId] || { up: 0, down: 0 };
+      let updatedCount;
+
+      if (voteType === "up") {
+        updatedCount = {
+          up: currentCount.up + (votes[commentId] === "up" ? -1 : 1),
+          down: currentCount.down - (votes[commentId] === "down" ? 1 : 0),
+        };
+      } else if (voteType === "down") {
+        updatedCount = {
+          up: currentCount.up - (votes[commentId] === "up" ? 1 : 0),
+          down: currentCount.down + (votes[commentId] === "down" ? -1 : 1),
+        };
       }
-      return { ...prevVotes, [commentId]: voteType }; // Set new vote
+
+      return { ...prevCounts, [commentId]: updatedCount };
     });
 
     try {
@@ -58,10 +74,8 @@ function Dashboard({ token }) {
                           ...comment,
                           vote_count:
                               voteType === "up"
-                                  ? comment.vote_count + 1
-                                  : voteType === "down"
-                                      ? comment.vote_count - 1
-                                      : comment.vote_count,
+                                  ? comment.vote_count + (votes[commentId] === "up" ? -1 : 1)
+                                  : comment.vote_count + (votes[commentId] === "down" ? -1 : 1),
                         }
                         : comment
                 ),
@@ -91,10 +105,18 @@ function Dashboard({ token }) {
               {data.map((post) => (
                   <li key={post.id} className="post">
                     {/* Render the post's content */}
-                    <p><strong>Post by:</strong> {post.username}</p>
-                    <p><strong>Content:</strong> {post.content}</p>
-                    <p><strong>Location:</strong> {post.location}</p>
-                    <p><strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}</p>
+                    <p>
+                      <strong>Post by:</strong> {post.username}
+                    </p>
+                    <p>
+                      <strong>Content:</strong> {post.content}
+                    </p>
+                    <p>
+                      <strong>Location:</strong> {post.location}
+                    </p>
+                    <p>
+                      <strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}
+                    </p>
 
                     {/* Toggle Comments button */}
                     <button
@@ -111,24 +133,38 @@ function Dashboard({ token }) {
                             {post.comments.map((comment) => (
                                 <li key={comment.id} className="comment">
                                   {/* Comment Content */}
-                                  <p><strong>{comment.username}</strong>: {comment.content}</p>
-                                  <p><strong>Timestamp:</strong> {new Date(comment.timestamp).toLocaleString()}</p>
+                                  <p>
+                                    <strong>{comment.username}</strong>: {comment.content}
+                                  </p>
+                                  <p>
+                                    <strong>Timestamp:</strong> {new Date(comment.timestamp).toLocaleString()}
+                                  </p>
 
                                   {/* Vote Section with Vote Counts */}
                                   <div className="votes-section">
                                     <button
-                                        className={`vote-btn upvote ${votes[comment.id] === "up" ? "active-upvote" : ""}`}
+                                        className={`vote-btn upvote ${
+                                            votes[comment.id] === "up" ? "active-upvote" : ""
+                                        }`}
                                         onClick={() => handleVote(comment.id, "up", post.id)}
                                     >
                                       ↑
                                     </button>
-                                    <span className="vote-count">{comment.vote_count}</span>
+                                    <span className="vote-count">
+                            {clickCounts[comment.id]?.up || 0} {/* Show upvote click count */}
+                          </span>
+
                                     <button
-                                        className={`vote-btn downvote ${votes[comment.id] === "down" ? "active-downvote" : ""}`}
+                                        className={`vote-btn downvote ${
+                                            votes[comment.id] === "down" ? "active-downvote" : ""
+                                        }`}
                                         onClick={() => handleVote(comment.id, "down", post.id)}
                                     >
                                       ↓
                                     </button>
+                                    <span className="vote-count">
+                            {clickCounts[comment.id]?.down || 0} {/* Show downvote click count */}
+                          </span>
                                   </div>
                                 </li>
                             ))}
