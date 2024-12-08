@@ -10,7 +10,6 @@ function Dashboard() {
   const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState(null);
-  const [locationError, setLocationError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentingPostId, setCommentingPostId] = useState(null);
@@ -83,6 +82,69 @@ function Dashboard() {
       ...prevOpenComments,
       [postId]: !prevOpenComments[postId],
     }));
+  };
+
+  const handleVote = async (commentId, voteType, postId) => {
+    const previousVote = votes[commentId];
+    let updatedVoteType = voteType;
+
+    if (previousVote === voteType) {
+      updatedVoteType = null; // Nullify the vote
+    }
+
+    setVotes((prevVotes) => ({
+      ...prevVotes,
+      [commentId]: updatedVoteType,
+    }));
+
+    setData((prevData) =>
+        prevData.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              comments: post.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  let upvoteCount = comment.upvoteCount || 0;
+                  let downvoteCount = comment.downvoteCount || 0;
+
+                  if (previousVote === "up") upvoteCount--;
+                  if (previousVote === "down") downvoteCount--;
+
+                  if (updatedVoteType === "up") upvoteCount++;
+                  if (updatedVoteType === "down") downvoteCount++;
+
+                  return {
+                    ...comment,
+                    upvoteCount,
+                    downvoteCount,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+          return post;
+        })
+    );
+
+    try {
+      await axios.post(
+          `http://localhost:8080/dashboard/comments/${commentId}/vote`,
+          {
+            userId,
+            type: updatedVoteType === "up" ? true : updatedVoteType === "down" ? false : null,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+      );
+    } catch (err) {
+      console.error(err);
+      setError("Failed to register vote.");
+    }
   };
 
   const openAddCommentModal = (postId) => {
@@ -248,7 +310,7 @@ function Dashboard() {
                       Add Comment
                     </button>
 
-                    {openComments[post.id] && post.comments && post.comments.length > 0 && (
+                    {openComments[post.id] && (
                         <div className="comments-section">
                           <ul>
                             {post.comments.map((comment) => (
@@ -260,6 +322,32 @@ function Dashboard() {
                                     <strong>Timestamp:</strong>{" "}
                                     {new Date(comment.timestamp).toLocaleString()}
                                   </p>
+                                  <div className="votes-section">
+                                    <button
+                                        className={`vote-btn upvote ${
+                                            votes[comment.id] === "up" ? "active-upvote" : ""
+                                        }`}
+                                        onClick={() => handleVote(comment.id, "up", post.id)}
+                                    >
+                                      ↑
+                                    </button>
+                                    <span className="vote-count">
+                            {comment.upvoteCount || 0}
+                          </span>
+                                    <button
+                                        className={`vote-btn downvote ${
+                                            votes[comment.id] === "down" ? "active-downvote" : ""
+                                        }`}
+                                        onClick={() =>
+                                            handleVote(comment.id, "down", post.id)
+                                        }
+                                    >
+                                      ↓
+                                    </button>
+                                    <span className="vote-count">
+                            {comment.downvoteCount || 0}
+                          </span>
+                                  </div>
                                 </li>
                             ))}
                           </ul>
