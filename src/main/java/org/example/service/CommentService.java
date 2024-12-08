@@ -10,6 +10,7 @@ import org.example.repository.CommentRepository;
 import org.example.repository.EndUserRepository;
 import org.example.repository.PostRepository;
 import org.example.repository.VoteRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,9 +49,10 @@ public class CommentService {
         return mapToDTO(savedComment);
     }
 
-    // Get comments by Post ID, with votes and usernames included
     public List<CommentDTO> getCommentsByPostId(Long postId) {
-        return commentRepository.findByPostId(postId).stream()
+        // Fetch comments for the given post ID, sorted by timestamp (most recent first)
+        return commentRepository.findByPostId(postId, Sort.by(Sort.Order.desc("timestamp")))
+                .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
