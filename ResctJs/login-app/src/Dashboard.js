@@ -58,10 +58,11 @@ function Dashboard() {
         });
         setData(response.data);
 
+        // Initialize votes state based on userVoteType
         const initialVotes = {};
         response.data.forEach((post) => {
           post.comments.forEach((comment) => {
-            initialVotes[comment.id] = comment.userVoteType;
+            initialVotes[comment.id] = comment.userVoteType; // Fetch userVoteType from the server
           });
         });
         setVotes(initialVotes);
@@ -290,9 +291,13 @@ function Dashboard() {
                                       <div className="votes-section">
                                         <button
                                             className={`vote-btn upvote ${
-                                                votes[comment.id] === "up" ? "active-upvote" : ""
+                                                votes[comment.id] === "up"
+                                                    ? "active-upvote"
+                                                    : ""
                                             }`}
-                                            onClick={() => handleVote(comment.id, "up", post.id)}
+                                            onClick={() =>
+                                                handleVote(comment.id, "up", post.id)
+                                            }
                                         >
                                           ↑
                                         </button>
@@ -305,7 +310,9 @@ function Dashboard() {
                                                     ? "active-downvote"
                                                     : ""
                                             }`}
-                                            onClick={() => handleVote(comment.id, "down", post.id)}
+                                            onClick={() =>
+                                                handleVote(comment.id, "down", post.id)
+                                            }
                                         >
                                           ↓
                                         </button>
@@ -347,7 +354,10 @@ function Dashboard() {
               </div>
             </div>
         )}
-        <button className="create-post-btn" onClick={() => alert("Create Post button clicked!")}>
+        <button
+            className="create-post-btn"
+            onClick={() => alert("Create Post button clicked!")}
+        >
           Create Post
         </button>
       </div>
