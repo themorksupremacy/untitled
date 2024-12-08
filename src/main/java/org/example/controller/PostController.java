@@ -64,24 +64,25 @@ public class PostController {
     // Cast a vote on a comment
     @PostMapping("/comments/{commentId}/vote")
     public ResponseEntity<?> castVote(@PathVariable Long commentId, @RequestBody VoteDTO voteDTO) {
-        // Check if the vote type is valid
-        if (voteDTO.getType() == null) {
-            return ResponseEntity.badRequest().body("Vote type cannot be null.");
-        }
-
         try {
-            // Extract userId from VoteDTO
             Long userId = voteDTO.getUserId();
+            Boolean type = voteDTO.getType(); // true for upvote, false for downvote, null to remove vote
 
-            // Call the service method
-            VoteDTO vote = voteService.castVote(commentId, userId, voteDTO.getType());
+            if (type == null) {
+                // If type is null, remove the vote
+                voteService.removeVote(commentId, userId);
+                return ResponseEntity.ok("Vote removed successfully.");
+            }
 
-            return ResponseEntity.ok(vote);
+            // Cast or update the vote
+            VoteDTO updatedVote = voteService.castVote(commentId, userId, type);
+            return ResponseEntity.ok(updatedVote);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error casting vote: " + e.getMessage());
         }
     }
+
 
     // In your VoteController.java
     @DeleteMapping("/comments/{commentId}/removeVote")
