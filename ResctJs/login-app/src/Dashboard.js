@@ -15,7 +15,6 @@ function Dashboard() {
   const [newComment, setNewComment] = useState("");
   const [commentingPostId, setCommentingPostId] = useState(null);
 
-  // Get userId from localStorage
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
@@ -23,7 +22,6 @@ function Dashboard() {
     }
   }, []);
 
-  // Fetch all users and find the username of the logged-in user
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -49,7 +47,6 @@ function Dashboard() {
     }
   }, [userId]);
 
-  // Fetch posts and handle votes
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,7 +76,6 @@ function Dashboard() {
     }
   }, [userId]);
 
-  // Get the user's location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -100,12 +96,10 @@ function Dashboard() {
     const previousVote = votes[commentId];
     let updatedVoteType = voteType;
 
-    // If the same vote type is clicked, remove the vote
     if (previousVote === voteType) {
       updatedVoteType = null; // Nullify the vote
     }
 
-    // Optimistically update the UI
     setVotes((prevVotes) => ({
       ...prevVotes,
       [commentId]: updatedVoteType,
@@ -142,7 +136,6 @@ function Dashboard() {
     );
 
     try {
-      // Send the vote to the backend
       await axios.post(
           `http://localhost:8080/dashboard/comments/${commentId}/vote`,
           {
@@ -186,7 +179,7 @@ function Dashboard() {
       const timestamp = new Date().toISOString();
 
       try {
-        await axios.post(
+        const response = await axios.post(
             "http://localhost:8080/dashboard/comments",
             {
               content,
@@ -201,23 +194,31 @@ function Dashboard() {
               },
             }
         );
+
+        const savedComment = response.data;
+
         alert("Comment added successfully!");
-        setNewComment("");
-        closeAddCommentModal();
+
         setData((prevData) =>
             prevData.map((post) => {
               if (post.id === commentingPostId) {
                 return {
                   ...post,
                   comments: [
-                    ...post.comments,
-                    { content, username, timestamp, upvoteCount: 0, downvoteCount: 0 },
-                  ],
+                    {
+                      ...savedComment,
+                      username, // Add the current user's username
+                    },
+                    ...post.comments, // Keep existing comments below
+                  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)), // Sort by timestamp
                 };
               }
               return post;
             })
         );
+
+        setNewComment("");
+        closeAddCommentModal();
       } catch (err) {
         console.error(err);
         setError("Failed to add comment.");
@@ -300,7 +301,9 @@ function Dashboard() {
                             </span>
                                         <button
                                             className={`vote-btn downvote ${
-                                                votes[comment.id] === "down" ? "active-downvote" : ""
+                                                votes[comment.id] === "down"
+                                                    ? "active-downvote"
+                                                    : ""
                                             }`}
                                             onClick={() => handleVote(comment.id, "down", post.id)}
                                         >
