@@ -16,6 +16,8 @@ public class CommentDTO {
 
     public CommentDTO() {}
 
+
+
     public CommentDTO(long id, String content, Timestamp timestamp, Long postId, Long userId, String username, List<VoteDTO> votes, int upvoteCount, int downvoteCount) {
         this.id = id;
         this.content = content;

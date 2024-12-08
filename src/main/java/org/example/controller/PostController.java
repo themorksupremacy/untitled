@@ -90,4 +90,19 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    // Create a new comment
+    @PostMapping("/comments")
+    public ResponseEntity<CommentDTO> addComment(@RequestBody CommentDTO commentDTO) {
+        try {
+            // Save the comment using the service layer
+            CommentDTO savedComment = commentService.saveComment(commentDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 }
