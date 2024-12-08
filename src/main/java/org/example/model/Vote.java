@@ -11,7 +11,7 @@ public class Vote {
 
     @ManyToOne // Many posts can belong to one user
     @JoinColumn(name = "userid", referencedColumnName = "id")
-    private EndUser user;
+    private EndUser endUser;
     @ManyToOne
     @JoinColumn(name = "commentid", referencedColumnName = "id")
     private Comment comment;
@@ -20,11 +20,11 @@ public class Vote {
 
     }
 
-    public Vote(Long id, Boolean type, EndUser user, Comment comment) {
+    public Vote(Long id, Boolean type, EndUser endUser, Comment comment) {
         super();
         this.id = id;
         this.type = type;
-        this.user = user;
+        this.endUser = endUser;
         this.comment = comment;
     }
 
@@ -50,12 +50,12 @@ public class Vote {
 
     public EndUser getEndUser() {
 
-        return user;
+        return endUser;
     }
 
-    public void setUser(EndUser user) {
+    public void setEndUser(EndUser user) {
 
-        this.user = user;
+        this.endUser = user;
     }
 
     public Comment getComment() {
