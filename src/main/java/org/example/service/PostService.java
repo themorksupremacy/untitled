@@ -78,11 +78,11 @@ public class PostService {
         String username = user != null ? user.getUsername() : "";  // Get the username
 
         return new PostDTO(
-                post.getId(),
+
                 post.getContent(),
                 post.getTimestamp(),
                 post.getLocation(),
-                username,  // Set the username in the PostDTO
+                // Set the username in the PostDTO
                 user != null ? user.getId() : null  // Pass userId to PostDTO
         );
     }
@@ -90,7 +90,6 @@ public class PostService {
     // Convert PostDTO to Post entity
     private Post convertToEntity(PostDTO postDTO) {
         Post post = new Post();
-        post.setId(postDTO.getId());
         post.setContent(postDTO.getContent());
         post.setTimestamp(postDTO.getTimestamp());
         post.setLocation(postDTO.getLocation());
