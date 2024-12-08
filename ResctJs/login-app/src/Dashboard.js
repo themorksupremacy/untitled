@@ -14,6 +14,8 @@ function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentingPostId, setCommentingPostId] = useState(null);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [newPostContent, setNewPostContent] = useState("");
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -58,11 +60,10 @@ function Dashboard() {
         });
         setData(response.data);
 
-        // Initialize votes state based on userVoteType
         const initialVotes = {};
         response.data.forEach((post) => {
           post.comments.forEach((comment) => {
-            initialVotes[comment.id] = comment.userVoteType; // Fetch userVoteType from the server
+            initialVotes[comment.id] = comment.userVoteType;
           });
         });
         setVotes(initialVotes);
@@ -76,22 +77,6 @@ function Dashboard() {
       fetchData();
     }
   }, [userId]);
-
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setLocation({ latitude, longitude });
-          },
-          (err) => {
-            setLocationError("Failed to retrieve location: " + err.message);
-          }
-      );
-    } else {
-      setLocationError("Geolocation is not supported by this browser.");
-    }
-  }, []);
 
   const handleVote = async (commentId, voteType, postId) => {
     const previousVote = votes[commentId];
@@ -208,10 +193,10 @@ function Dashboard() {
                   comments: [
                     {
                       ...savedComment,
-                      username, // Add the current user's username
+                      username,
                     },
-                    ...post.comments, // Keep existing comments below
-                  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)), // Sort by timestamp
+                    ...post.comments,
+                  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)),
                 };
               }
               return post;
@@ -227,6 +212,58 @@ function Dashboard() {
     }
   };
 
+  const openAddPostModal = () => {
+    setIsPostModalOpen(true);
+  };
+
+  const closeAddPostModal = () => {
+    setIsPostModalOpen(false);
+    setNewPostContent("");
+  };
+
+  const handleCreatePost = async () => {
+    if (newPostContent.trim()) {
+      const content = newPostContent;
+      const timestamp = new Date().toISOString();
+
+      try {
+        const response = await axios.post(
+            "http://localhost:8080/dashboard/posts",
+            {
+              content,
+              userId,
+              timestamp,
+              location,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            }
+        );
+
+        const savedPost = response.data;
+
+        alert("Post created successfully!");
+
+        setData((prevData) => [
+          {
+            ...savedPost,
+            username,
+            comments: [],
+          },
+          ...prevData,
+        ]);
+
+        closeAddPostModal();
+      } catch (err) {
+        console.error(err);
+        setError("Failed to create post.");
+      }
+    }
+  };
+
   return (
       <div className="dashboard-container">
         <div className="dashboard-header">
@@ -234,23 +271,13 @@ function Dashboard() {
           {username && (
               <div className="user-info">
                 Logged in as: <strong>{username}</strong>
+                <p>Your Location: Esslingen</p>
               </div>
+
           )}
         </div>
 
-        {locationError && <p style={{ color: "red" }}>{locationError}</p>}
-
-        {location ? (
-            <div>
-              <p>Your current location:</p>
-              <p>Latitude: {location.latitude}</p>
-              <p>Longitude: {location.longitude}</p>
-            </div>
-        ) : (
-            <p>Loading your location...</p>
-        )}
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{color: "red"}}>{error}</p>}
         {data ? (
             <ul>
               {data.map((post) => (
@@ -265,8 +292,7 @@ function Dashboard() {
                       <strong>Location:</strong> {post.location}
                     </p>
                     <p>
-                      <strong>Timestamp:</strong>{" "}
-                      {new Date(post.timestamp).toLocaleString()}
+                      <strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}
                     </p>
                     <button
                         className="toggle-comments-btn"
@@ -291,13 +317,9 @@ function Dashboard() {
                                       <div className="votes-section">
                                         <button
                                             className={`vote-btn upvote ${
-                                                votes[comment.id] === "up"
-                                                    ? "active-upvote"
-                                                    : ""
+                                                votes[comment.id] === "up" ? "active-upvote" : ""
                                             }`}
-                                            onClick={() =>
-                                                handleVote(comment.id, "up", post.id)
-                                            }
+                                            onClick={() => handleVote(comment.id, "up", post.id)}
                                         >
                                           ↑
                                         </button>
@@ -306,13 +328,9 @@ function Dashboard() {
                             </span>
                                         <button
                                             className={`vote-btn downvote ${
-                                                votes[comment.id] === "down"
-                                                    ? "active-downvote"
-                                                    : ""
+                                                votes[comment.id] === "down" ? "active-downvote" : ""
                                             }`}
-                                            onClick={() =>
-                                                handleVote(comment.id, "down", post.id)
-                                            }
+                                            onClick={() => handleVote(comment.id, "down", post.id)}
                                         >
                                           ↓
                                         </button>
@@ -354,10 +372,25 @@ function Dashboard() {
               </div>
             </div>
         )}
-        <button
-            className="create-post-btn"
-            onClick={() => alert("Create Post button clicked!")}
-        >
+
+        {isPostModalOpen && (
+            <div className="modal">
+              <div className="modal-content">
+                <h3>Create New Post</h3>
+                <textarea
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                    placeholder="Enter your post content here"
+                ></textarea>
+                <div className="modal-actions">
+                  <button onClick={handleCreatePost}>Create</button>
+                  <button onClick={closeAddPostModal}>Cancel</button>
+                </div>
+              </div>
+            </div>
+        )}
+
+        <button className="create-post-btn" onClick={openAddPostModal}>
           Create Post
         </button>
       </div>
