@@ -1,14 +1,13 @@
 package org.example.model;
 
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "post")
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate ID
     private long id;
     private String content;
     private Timestamp timestamp;
@@ -18,19 +17,17 @@ public class Post {
     @JoinColumn(name = "userid", referencedColumnName = "id")
     private EndUser endUser;
 
-    public Post() {
-    }
+    public Post() {}
 
-    public Post(long id, String content, Timestamp timestamp, String location, EndUser endUser) {
-        this.id = id;
+    // Constructor with all fields excluding ID since it's auto-generated
+    public Post(String content, Timestamp timestamp, String location, EndUser endUser) {
         this.content = content;
         this.timestamp = timestamp;
         this.location = location;
         this.endUser = endUser;
     }
 
-    //Getters & Setters
-
+    // Getters & Setters
     public long getId() {
         return id;
     }
@@ -70,5 +67,4 @@ public class Post {
     public void setEndUser(EndUser endUser) {
         this.endUser = endUser;
     }
-
 }
