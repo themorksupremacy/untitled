@@ -94,7 +94,7 @@ function Dashboard({ token }) {
 
   return (
       <div className="dashboard-container">
-        <h1>Dashboard</h1>
+        <h1>Jodel</h1>
         {error && <p style={{ color: "red" }}>{error}</p>}
         {data ? (
             <ul>
