@@ -5,6 +5,7 @@ import org.example.model.EndUser;
 import org.example.model.Post;
 import org.example.repository.PostRepository;
 import org.example.repository.EndUserRepository; // Add the EndUserRepository to fetch users
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +22,13 @@ public class PostService {
         this.endUserRepository = endUserRepository;
     }
 
-    // Get all posts as DTOs
+    // Get all posts as DTOs, sorted by timestamp (most recent first)
     public List<PostDTO> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
+        // Fetch the posts sorted by timestamp in descending order
+        List<Post> posts = postRepository.findAll(Sort.by(Sort.Order.desc("timestamp")));
+
+        // Convert the posts to DTOs
+        return posts.stream()
                 .map(this::convertToDTO)  // Convert Post entity to PostDTO
                 .collect(Collectors.toList());
     }
