@@ -298,3 +298,17 @@ li p strong {
     background: #ccc;
     color: #333;
 }
+
+.add-comment-link {
+    background: none;
+    border: none;
+    color: #007bff; /* Bootstrap's link blue color */
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.add-comment-link:hover {
+    color: #0056b3; /* Darker blue for hover effect */
+}

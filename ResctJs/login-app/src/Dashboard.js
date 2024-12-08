@@ -78,69 +78,6 @@ function Dashboard() {
     }
   }, [userId]);
 
-  const handleVote = async (commentId, voteType, postId) => {
-    const previousVote = votes[commentId];
-    let updatedVoteType = voteType;
-
-    if (previousVote === voteType) {
-      updatedVoteType = null; // Nullify the vote
-    }
-
-    setVotes((prevVotes) => ({
-      ...prevVotes,
-      [commentId]: updatedVoteType,
-    }));
-
-    setData((prevData) =>
-        prevData.map((post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              comments: post.comments.map((comment) => {
-                if (comment.id === commentId) {
-                  let upvoteCount = comment.upvoteCount || 0;
-                  let downvoteCount = comment.downvoteCount || 0;
-
-                  if (previousVote === "up") upvoteCount--;
-                  if (previousVote === "down") downvoteCount--;
-
-                  if (updatedVoteType === "up") upvoteCount++;
-                  if (updatedVoteType === "down") downvoteCount++;
-
-                  return {
-                    ...comment,
-                    upvoteCount,
-                    downvoteCount,
-                  };
-                }
-                return comment;
-              }),
-            };
-          }
-          return post;
-        })
-    );
-
-    try {
-      await axios.post(
-          `http://localhost:8080/dashboard/comments/${commentId}/vote`,
-          {
-            userId,
-            type: updatedVoteType === "up" ? true : updatedVoteType === "down" ? false : null,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-      );
-    } catch (err) {
-      console.error(err);
-      setError("Failed to register vote.");
-    }
-  };
-
   const toggleComments = (postId) => {
     setOpenComments((prevOpenComments) => ({
       ...prevOpenComments,
@@ -227,14 +164,13 @@ function Dashboard() {
       const timestamp = new Date().toISOString();
 
       try {
-        // Corrected API URL: Ensure `/dashboard/posts` matches the backend
         const response = await axios.post(
             "http://localhost:8080/dashboard/posts",
             {
               content,
-              userId: parseInt(userId), // Ensure userId is a number
+              userId: parseInt(userId),
               timestamp,
-              location: "Esslingen", // Add location here or use dynamic value
+              location: "Esslingen",
             },
             {
               headers: {
@@ -248,7 +184,6 @@ function Dashboard() {
 
         alert("Post created successfully!");
 
-        // Add new post to the state
         setData((prevData) => [
           {
             ...savedPost,
@@ -266,7 +201,6 @@ function Dashboard() {
     }
   };
 
-
   return (
       <div className="dashboard-container">
         <div className="dashboard-header">
@@ -276,11 +210,10 @@ function Dashboard() {
                 Logged in as: <strong>{username}</strong>
                 <p>Your Location: Esslingen</p>
               </div>
-
           )}
         </div>
 
-        {error && <p style={{color: "red"}}>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
         {data ? (
             <ul>
               {data.map((post) => (
@@ -295,63 +228,43 @@ function Dashboard() {
                       <strong>Location:</strong> {post.location}
                     </p>
                     <p>
-                      <strong>Timestamp:</strong> {new Date(post.timestamp).toLocaleString()}
+                      <strong>Timestamp:</strong>{" "}
+                      {new Date(post.timestamp).toLocaleString()}
                     </p>
+
+                    {/* Show/Hide Comments Button */}
                     <button
                         className="toggle-comments-btn"
                         onClick={() => toggleComments(post.id)}
                     >
                       {openComments[post.id] ? "Hide Comments" : "Show Comments"}
                     </button>
-                    {openComments[post.id] &&
-                        post.comments &&
-                        post.comments.length > 0 && (
-                            <div className="comments-section">
-                              <ul>
-                                {post.comments.map((comment) => (
-                                    <li key={comment.id} className="comment">
-                                      <p>
-                                        <strong>{comment.username}</strong>: {comment.content}
-                                      </p>
-                                      <p>
-                                        <strong>Timestamp:</strong>{" "}
-                                        {new Date(comment.timestamp).toLocaleString()}
-                                      </p>
-                                      <div className="votes-section">
-                                        <button
-                                            className={`vote-btn upvote ${
-                                                votes[comment.id] === "up" ? "active-upvote" : ""
-                                            }`}
-                                            onClick={() => handleVote(comment.id, "up", post.id)}
-                                        >
-                                          ↑
-                                        </button>
-                                        <span className="vote-count">
-                              {comment.upvoteCount || 0}
-                            </span>
-                                        <button
-                                            className={`vote-btn downvote ${
-                                                votes[comment.id] === "down" ? "active-downvote" : ""
-                                            }`}
-                                            onClick={() => handleVote(comment.id, "down", post.id)}
-                                        >
-                                          ↓
-                                        </button>
-                                        <span className="vote-count">
-                              {comment.downvoteCount || 0}
-                            </span>
-                                      </div>
-                                    </li>
-                                ))}
-                              </ul>
-                              <button
-                                  className="add-comment-btn"
-                                  onClick={() => openAddCommentModal(post.id)}
-                              >
-                                Add Comment
-                              </button>
-                            </div>
-                        )}
+
+                    {/* Add Comment Button */}
+                    <button
+                        className="add-comment-link"
+                        onClick={() => openAddCommentModal(post.id)}
+                    >
+                      Add Comment
+                    </button>
+
+                    {openComments[post.id] && post.comments && post.comments.length > 0 && (
+                        <div className="comments-section">
+                          <ul>
+                            {post.comments.map((comment) => (
+                                <li key={comment.id} className="comment">
+                                  <p>
+                                    <strong>{comment.username}</strong>: {comment.content}
+                                  </p>
+                                  <p>
+                                    <strong>Timestamp:</strong>{" "}
+                                    {new Date(comment.timestamp).toLocaleString()}
+                                  </p>
+                                </li>
+                            ))}
+                          </ul>
+                        </div>
+                    )}
                   </li>
               ))}
             </ul>
