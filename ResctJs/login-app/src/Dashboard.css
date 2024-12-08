@@ -20,15 +20,14 @@ body {
 /* Dashboard container styling */
 .dashboard-container {
     width: 100%;
-    max-width: 960px; /* Widened container for a desktop view */
     background-color: #fff;
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Softer shadows */
-    margin: 40px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
     text-align: left;
     overflow-y: auto;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 40px); /* Adjust height */
 }
 
 /* Header */
@@ -38,17 +37,23 @@ h1 {
     margin-bottom: 20px;
     font-weight: 700;
     text-transform: uppercase;
+    text-align: center; /* Center the header */
 }
 
 /* List styling */
 ul {
-    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap; /* Wrap items to the next line */
+    gap: 20px; /* Add spacing between posts */
+    justify-content: space-between; /* Distribute posts across the container */
     padding: 0;
+    list-style-type: none;
 }
 
+/* Post items */
 li {
+    flex: 1 1 calc(33.333% - 20px); /* Set post width for 3 items per row */
     background: #ffffff;
-    margin-bottom: 20px;
     padding: 20px;
     border-radius: 12px; /* Slightly rounded edges */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadows */
@@ -86,63 +91,101 @@ li p strong {
     background-color: #1991DB; /* Darker blue on hover */
 }
 
+/* Comments section styling */
+.comments-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f7f9fa; /* Slightly lighter background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: flex;
+    flex-direction: column; /* Stack comments vertically */
+    gap: 15px; /* Add spacing between comments */
+}
+
+/* Individual comment styling */
+.comment {
+    width: 100%; /* Make comments span full width of their container */
+    padding: 15px;
+    background-color: #ffffff; /* White background for each comment */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for each comment */
+    display: flex; /* Allow content inside the comment to align properly */
+    flex-direction: column; /* Ensure content in the comment stacks */
+    gap: 10px; /* Space between content sections */
+}
+
+/* Strong username styling in comments */
+.comment p strong {
+    color: #1DA1F2; /* Twitter-like blue */
+}
+
+/* Votes section in comments */
+.comment .votes-section {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between vote buttons and counts */
+    margin-top: 8px;
+}
+
 /* Vote Buttons Styling */
 .vote-btn {
     padding: 10px;
-    margin: 5px;
     font-size: 20px;
     cursor: pointer;
     border: 2px solid transparent;
-    border-radius: 20px; /* Rounded buttons */
+    border-radius: 50%; /* Rounded buttons */
     transition: background-color 0.3s, color 0.3s, transform 0.2s;
     width: 40px;
     height: 40px;
-    display: inline-flex;
+    display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    background-color: #e1e8ed; /* Light gray */
+    color: #333;
+}
+
+.vote-btn:hover {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.vote-btn.active-upvote {
+    background-color: green; /* Twitter-like blue for active upvote */
+    color: white;
+}
+
+.vote-btn.active-downvote {
+    background-color: red; /* Red color for active downvote */
+    color: white;
 }
 
 /* Vote Count Styling */
 .vote-count {
     font-size: 14px;
     color: #333;
-    margin-left: 8px;
 }
 
-/* Active Upvote Button */
-.upvote {
-    background-color: #e1e8ed; /* Light gray */
-    color: #333;
-}
-
-.upvote.active-upvote {
-    background-color: #1DA1F2; /* Twitter-like blue */
+/* Create Post Button */
+.create-post-btn {
+    padding: 15px 30px;
+    margin-top: 20px;
+    background-color: #1DA1F2;
     color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.upvote:hover {
-    background-color: #1991DB; /* Darker blue on hover */
-}
-
-/* Active Downvote Button */
-.downvote {
-    background-color: #e1e8ed; /* Light gray */
-    color: #333;
-}
-
-.downvote.active-downvote {
-    background-color: #F45D5D; /* Red color for downvotes */
-    color: white;
-}
-
-.downvote:hover {
-    background-color: #D93636; /* Darker red on hover */
-}
-
-/* Votes section */
-.votes-section {
-    margin-top: 10px;
+.create-post-btn:hover {
+    background-color: #1991DB;
 }
 
 /* Make the layout responsive for larger screens */
@@ -164,9 +207,14 @@ li p strong {
     }
 }
 
-@media (min-width: 1024px) {
-    .dashboard-container {
-        max-width: 1200px; /* Further increase max-width */
+@media (max-width: 768px) {
+    li {
+        flex: 1 1 calc(50% - 20px); /* Adjust to 2 items per row on smaller screens */
     }
 }
 
+@media (max-width: 480px) {
+    li {
+        flex: 1 1 100%; /* Single item per row on very small screens */
+    }
+}
