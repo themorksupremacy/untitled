@@ -227,13 +227,14 @@ function Dashboard() {
       const timestamp = new Date().toISOString();
 
       try {
+        // Corrected API URL: Ensure `/dashboard/posts` matches the backend
         const response = await axios.post(
             "http://localhost:8080/dashboard/posts",
             {
               content,
-              userId,
+              userId: parseInt(userId), // Ensure userId is a number
               timestamp,
-              location,
+              location: "Esslingen", // Add location here or use dynamic value
             },
             {
               headers: {
@@ -247,6 +248,7 @@ function Dashboard() {
 
         alert("Post created successfully!");
 
+        // Add new post to the state
         setData((prevData) => [
           {
             ...savedPost,
@@ -263,6 +265,7 @@ function Dashboard() {
       }
     }
   };
+
 
   return (
       <div className="dashboard-container">

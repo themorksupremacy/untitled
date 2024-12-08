@@ -50,10 +50,19 @@ public class PostController {
     }
 
     // Create a new post
-    @PostMapping
-    public PostDTO savePost(@RequestBody PostDTO postDTO) {
-        return postService.savePost(postDTO);
+// Create a new post (Fixed URL and improved handling)
+    @PostMapping("/posts")
+    public ResponseEntity<?> savePost(@RequestBody PostDTO postDTO) {
+        try {
+            PostDTO savedPost = postService.savePost(postDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating post: " + e.getMessage());
+        }
     }
+
 
     // Delete a post by ID
     @DeleteMapping("/{id}")
@@ -104,6 +113,4 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-
 }

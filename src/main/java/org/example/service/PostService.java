@@ -8,6 +8,7 @@ import org.example.repository.EndUserRepository; // Add the EndUserRepository to
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,17 +42,30 @@ public class PostService {
     }
 
     // Save a post from DTO
+// Save a post from DTO (Added validations)
     public PostDTO savePost(PostDTO postDTO) {
-        Post post = convertToEntity(postDTO);  // Convert PostDTO to Post entity
+        if (postDTO.getContent() == null || postDTO.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("Post content cannot be empty.");
+        }
 
-        // Find the EndUser by ID and associate it with the Post entity
+        if (postDTO.getUserId() == null) {
+            throw new IllegalArgumentException("User ID is required to create a post.");
+        }
+
+        // Find the user by ID
         EndUser user = endUserRepository.findById(postDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid User ID: " + postDTO.getUserId()));
-        post.setEndUser(user);  // Set the EndUser for the Post
 
-        Post savedPost = postRepository.save(post);  // Save the Post to the database
-        return convertToDTO(savedPost);  // Return the saved Post as PostDTO
+        Post post = new Post();
+        post.setContent(postDTO.getContent());
+        post.setTimestamp(postDTO.getTimestamp() != null ? postDTO.getTimestamp() : new Timestamp(System.currentTimeMillis()));
+        post.setLocation(postDTO.getLocation());
+        post.setEndUser(user);
+
+        Post savedPost = postRepository.save(post);
+        return convertToDTO(savedPost);
     }
+
 
     // Delete a post by ID
     public void deletePost(Long id) {
