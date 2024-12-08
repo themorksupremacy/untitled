@@ -19,6 +19,9 @@ function Login({ setToken }) {
       });
       setMessage(response.data.message); // Display success message
       setToken(response.data.token); // Store token
+      const userId = response.data.userId; // Get the userId from the response
+      localStorage.setItem('token', response.data.token); // Store token in localStorage
+      localStorage.setItem('userId', userId); // Store userId in localStorage
       navigate('/dashboard'); // Navigate to the dashboard
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -30,31 +33,31 @@ function Login({ setToken }) {
   };
 
   return (
-      <div className="login-container">
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>Username:</label>
-            <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-            />
-          </div>
-          <div>
-            <label>Password:</label>
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-          </div>
-          <button type="submit">Login</button>
-        </form>
-        {message && <p>{message}</p>}
-      </div>
+    <div className="login-container">
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      {message && <p>{message}</p>}
+    </div>
   );
 }
 
