@@ -1,0 +1,2 @@
+public class PostRepositoryTest {
+}

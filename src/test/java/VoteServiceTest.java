@@ -92,4 +92,20 @@ class VoteServiceTest {
         // Assert
         verify(voteRepository, times(1)).delete(vote);
     }
+
+    @Test
+    void testMapToDTO() {
+        // Arrange
+        EndUser user = new EndUser(1L, "TestUser", "test@example.com", "password123");
+        Comment comment = new Comment(1L, "Test Comment", null, null, null);
+        Vote vote = new Vote(1L, true, user, comment);
+
+        // Act
+        VoteDTO voteDTO = voteService.mapToDTO(vote);
+
+        // Assert
+        assertEquals(1L, voteDTO.getId());
+        assertEquals(1L, voteDTO.getUserId());
+        assertEquals(1L, voteDTO.getComment());
+    }
 }

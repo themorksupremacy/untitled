@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Sort;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -82,6 +83,22 @@ class CommentServiceTest {
     }
 
     @Test
+    void testGetCommentsByPostId() {
+        // Arrange
+        Post post = new Post(1L, "Post", new Timestamp(System.currentTimeMillis()), "Location", null);
+        Comment comment1 = new Comment(1L, "Comment 1", new Timestamp(System.currentTimeMillis()), post, new EndUser());
+        Comment comment2 = new Comment(2L, "Comment 2", new Timestamp(System.currentTimeMillis()), post, new EndUser());
+        when(commentRepository.findByPostId(1L, Sort.by(Sort.Order.desc("timestamp")))).thenReturn(List.of(comment1, comment2));
+
+        // Act
+        List<CommentDTO> comments = commentService.getCommentsByPostId(1L);
+
+        // Assert
+        assertEquals(2, comments.size());
+        verify(commentRepository, times(1)).findByPostId(1L, Sort.by(Sort.Order.desc("timestamp")));
+    }
+
+    @Test
     void testDeleteComment() {
         // Act
         commentService.deleteComment(1L);
@@ -89,5 +106,42 @@ class CommentServiceTest {
         // Assert
         verify(commentRepository, times(1)).deleteById(1L);
     }
-}
 
+    @Test
+    void testMapToDTO() {
+        // Arrange
+        Post post = new Post(1L, "Post", new Timestamp(System.currentTimeMillis()), "Location", null);
+        EndUser user = new EndUser(1L, "TestUser", "test@example.com", "1234");
+        Comment comment = new Comment(1L, "Comment 1", new Timestamp(System.currentTimeMillis()), post, user);
+        Vote vote1 = new Vote(1L, true, user, comment);
+        Vote vote2 = new Vote(2L, false, user, comment);
+        when(voteRepository.findByCommentId(1L)).thenReturn(List.of(vote1, vote2));
+
+        // Act
+        CommentDTO commentDTO = commentService.mapToDTO(comment);
+
+        // Assert
+        assertNotNull(commentDTO);
+        assertEquals("Unknown User", commentDTO.getUsername());
+        assertEquals(2, commentDTO.getVotes().size());
+        assertEquals(1, commentDTO.getUpvoteCount());
+        assertEquals(1, commentDTO.getDownvoteCount());
+    }
+
+    @Test
+    void testMapVoteToDTO() {
+        // Arrange
+        EndUser user = new EndUser(1L, "TestUser", "test@example.com", "1234");
+        Comment comment = new Comment(1L, "Test Comment", new Timestamp(System.currentTimeMillis()), new Post(), user);
+        Vote vote = new Vote(1L, true, user, comment);
+
+        // Act
+        VoteDTO voteDTO = commentService.mapVoteToDTO(vote);
+
+        // Assert
+        assertNotNull(voteDTO);
+        assertEquals(1L, voteDTO.getUserId());
+        assertEquals(1L, voteDTO.getComment());
+        assertTrue(voteDTO.getType());
+    }
+}

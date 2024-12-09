@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -108,6 +109,23 @@ public class EndUserServiceTest {
         });
 
         assertTrue(exception.getMessage().contains("Passwordhash: password123 entered password: wrongpassword"));
+    }
+
+    @Test
+    void testGenerateToken() throws Exception {
+        // Arrange
+        EndUser endUser = new EndUser(1L, "TestUser", "test@example.com", "password123");
+
+        // Access the private generateToken method using reflection
+        Method generateTokenMethod = EndUserService.class.getDeclaredMethod("generateToken", EndUser.class);
+        generateTokenMethod.setAccessible(true);
+
+        // Act
+        String token = (String) generateTokenMethod.invoke(endUserService, endUser);
+
+        // Assert
+        assertNotNull(token);
+        assertTrue(token.startsWith("token_1_")); // Ensure the token contains the expected format
     }
 }
 

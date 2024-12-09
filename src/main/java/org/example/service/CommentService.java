@@ -63,7 +63,7 @@ public class CommentService {
     }
 
     // Map Comment entity to DTO, now including the username and votes
-    private CommentDTO mapToDTO(Comment comment) {
+    CommentDTO mapToDTO(Comment comment) {
         EndUser user = comment.getEndUser();
         String username = (user != null) ? user.getUsername() : "Unknown User";
         List<VoteDTO> votes = voteRepository.findByCommentId(comment.getCommentId()).stream()
@@ -88,7 +88,7 @@ public class CommentService {
     }
 
     // Map Vote entity to VoteDTO
-    private VoteDTO mapVoteToDTO(Vote vote) {
+    VoteDTO mapVoteToDTO(Vote vote) {
         return new VoteDTO(
                 vote.getVoteId(),
                 vote.getType(),

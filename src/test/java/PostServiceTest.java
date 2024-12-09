@@ -73,6 +73,19 @@ class PostServiceTest {
     }
 
     @Test
+    void testGetPostByIdReturnsNullForInvalidId() {
+        // Arrange
+        when(postRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Act
+        PostDTO postDTO = postService.getPostById(999L);
+
+        // Assert
+        assertNull(postDTO);
+        verify(postRepository, times(1)).findById(999L);
+    }
+
+    @Test
     void testSavePost() {
         // Arrange
         EndUser user = new EndUser(1L, "TestUser", "test@example.com", "1234");
@@ -125,4 +138,3 @@ class PostServiceTest {
         verify(postRepository, times(1)).deleteById(1L);
     }
 }
-

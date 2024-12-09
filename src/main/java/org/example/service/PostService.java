@@ -86,15 +86,4 @@ public class PostService {
                 user != null ? user.getId() : null  // Pass userId to PostDTO
         );
     }
-
-    // Convert PostDTO to Post entity
-    private Post convertToEntity(PostDTO postDTO) {
-        Post post = new Post();
-        post.setId(postDTO.getId());
-        post.setContent(postDTO.getContent());
-        post.setTimestamp(postDTO.getTimestamp());
-        post.setLocation(postDTO.getLocation());
-        // No need to set EndUser here because it's handled in savePost
-        return post;
-    }
 }

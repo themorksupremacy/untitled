@@ -29,18 +29,6 @@ public class VoteService {
         return voteRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    public Vote getVoteid(long id) {
-        return voteRepository.getById(id);
-    }
-
-    public Vote saveVote(Vote vote) {
-        return voteRepository.save(vote);
-    }
-
-    public void deleteVote(Long id) {
-        voteRepository.deleteById(id);
-    }
-
     // Handle voting on comments (upvote or downvote) using boolean
     public VoteDTO castVote(Long commentId, Long userId, boolean voteType) {
         // Find the comment by ID
@@ -79,7 +67,7 @@ public class VoteService {
         return mapToDTO(savedVote);
     }
 
-    private VoteDTO mapToDTO(Vote vote) {
+    public VoteDTO mapToDTO(Vote vote) {
         return new VoteDTO(vote.getVoteId(), vote.getType(), vote.getEndUser().getId(), vote.getComment().getCommentId());
     }
 
@@ -99,5 +87,7 @@ public class VoteService {
         // If a vote exists, remove it
         existingVote.ifPresent(voteRepository::delete);
     }
+
+
 
 }
